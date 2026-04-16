@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Какая твоя кофейная личность? | Basecamp Coffee</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --warm-bg: #FDF6EE;
+            --warm-cream: #F5E6D3;
+            --warm-brown: #6B4226;
+            --warm-dark: #3E2723;
+            --warm-accent: #D4A574;
+            --warm-light: #FFF8F0;
+            --cozy-peach: #FFDAB9;
+            --card-shadow: 0 4px 20px rgba(107, 66, 38, 0.12);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--warm-bg);
+            color: var(--warm-dark);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 20% 50%, rgba(212, 165, 116, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 218, 185, 0.2) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* === START SCREEN === */
+        .start-screen {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .start-screen .logo {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .start-screen h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--warm-brown);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .start-screen p {
+            font-size: 18px;
+            color: var(--warm-brown);
+            opacity: 0.8;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, var(--warm-brown), #8B5E3C);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(107, 66, 38, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(107, 66, 38, 0.4);
+        }
+
+        /* === QUIZ SCREEN === */
+        .quiz-screen {
+            animation: slideIn 0.5s ease;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--warm-cream);
+            border-radius: 4px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--warm-accent), var(--warm-brown));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .question-counter {
+            text-align: center;
+            font-size: 14px;
+            color: var(--warm-brown);
+            opacity: 0.6;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--warm-brown);
+            margin-bottom: 28px;
+            line-height: 1.3;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-card {
+            background: white;
+            border: 2px solid var(--warm-cream);
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--warm-dark);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .answer-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 16px 0 0 16px;
+            transition: all 0.25s ease;
+        }
+
+        .answer-card:nth-child(1)::before { background: #D4A574; }
+        .answer-card:nth-child(2)::before { background: #7CB342; }
+        .answer-card:nth-child(3)::before { background: #7E57C2; }
+        .answer-card:nth-child(4)::before { background: #26A69A; }
+        .answer-card:nth-child(5)::before { background: #C62828; }
+        .answer-card:nth-child(6)::before { background: #78909C; }
+
+        .answer-card:hover {
+            border-color: var(--warm-accent);
+            transform: translateX(4px);
+            box-shadow: 0 6px 25px rgba(107, 66, 38, 0.18);
+        }
+
+        .answer-card:active {
+            transform: translateX(4px) scale(0.98);
+        }
+
+        .answer-letter {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            background: var(--warm-cream);
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--warm-brown);
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* === RESULT SCREEN === */
+        .result-screen {
+            text-align: center;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: bounce 1s ease infinite;
+        }
+
+        .result-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--warm-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .result-name {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--warm-brown);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .result-tagline {
+            font-size: 18px;
+            font-style: italic;
+            color: var(--warm-brown);
+            opacity: 0.7;
+            margin-bottom: 32px;
+        }
+
+        .coffee-card {
+            background: linear-gradient(135deg, var(--warm-dark), #5D4037);
+            color: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 30px rgba(62, 39, 35, 0.3);
+        }
+
+        .coffee-card .coffee-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        .coffee-card .coffee-name {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .coffee-card .coffee-desc {
+            font-size: 16px;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .coffee-emoji {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .share-section {
+            margin-top: 24px;
+        }
+
+        .restart-btn {
+            background: transparent;
+            border: 2px solid var(--warm-brown);
+            color: var(--warm-brown);
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+
+        .restart-btn:hover {
+            background: var(--warm-brown);
+            color: white;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--warm-brown);
+            opacity: 0.5;
+        }
+
+        .footer a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Hidden */
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- START SCREEN -->
+        <div id="startScreen" class="start-screen">
+            <div class="logo">☕</div>
+            <h1>Какая твоя кофейная личность?</h1>
+            <p>Ответь на 7 вопросов и узнай, какой напиток идеально подходит именно тебе.</p>
+            <button class="start-btn" onclick="startQuiz()">Начать викторину</button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quizScreen" class="quiz-screen hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="questionCounter" class="question-counter"></div>
+            <div id="questionText" class="question-text"></div>
+            <div id="answers" class="answers"></div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="resultScreen" class="result-screen hidden"></div>
+
+        <div class="footer">
+            Basecamp Coffee &mdash; Кофейня с характером
+        </div>
+    </div>
+
+    <script>
+        // === DATA ===
+        const personalities = {
+            cozy: {
+                name: "Уютная Классика",
+                icon: "🏠",
+                tagline: "Комфорт в каждой чашке",
+                coffee: "Средняя Обжарка Дрип",
+                coffeeEmoji: "☕",
+                desc: "Тёплый, знакомый, надёжный. Как любимый плед в дождливый день. Ты ценишь простые радости и знаешь: лучшее — это то, что проверено временем."
+            },
+            zen: {
+                name: "Дзен Минималист",
+                icon: "🌿",
+                tagline: "Просто. Чисто. Идеально.",
+                coffee: "Чёрный кофе, Одиночное Происхождение",
+                coffeeEmoji: "🍵",
+                desc: "Тишина — твой язык. Ты не нуждаешься в украшательствах, чтобы ценить момент. Каждый глоток — медитация. Простота — высшая форма изысканности."
+            },
+            nightowl: {
+                name: "Ночная Сова",
+                icon: "🌙",
+                tagline: "Сон опционален",
+                coffee: "Красный Глаз (кофе + эспрессо)",
+                coffeeEmoji: "⚡",
+                desc: "Мир засыпает — ты просыпаешься. Лучшие идеи приходят в 2 ночи. Тебе не нужен будильник — тебе нужен кофе, который не отпускает до рассвета."
+            },
+            health: {
+                name: "Здоровяк",
+                icon: "💪",
+                tagline: "Здоровье в каждом глотке",
+                coffee: "Американо с Овсяным Молоком",
+                coffeeEmoji: "🥛",
+                desc: "Тело — храм, и ты знаешь, чем его кормить. Кофе для тебя — это не просто напиток, а часть ритуала заботы о себе. Каждый выбор осознан."
+            },
+            artist: {
+                name: "Артист Сноб",
+                icon: "🎨",
+                tagline: "Ты знаешь, что нравится",
+                coffee: "Пуровер, Одиночное Происхождение",
+                coffeeEmoji: "✨",
+                desc: "Кофе — это искусство, а ты — ценитель. Ты различаешь ноты малины в эфиопском сидамо и фундук в бразильском сантосе. Вкус — это твой язык."
+            },
+            pragmatist: {
+                name: "Практичный Прагматик",
+                icon: "⚙️",
+                tagline: "Просто пусть работает",
+                coffee: "Большой Дрип, Свежий что есть",
+                coffeeEmoji: "🔧",
+                desc: "Без лишних слов. Без пафоса. Кофе — это топливо, и ты ценишь его за надёжность. Большой, горячий, сейчас. Зачем усложнять?"
+            }
+        };
+
+        const questions = [
+            {
+                text: "Идеальные выходные?",
+                answers: [
+                    { text: "Прогулка по книжным магазинам и кофейням", type: "cozy" },
+                    { text: "Тишина, медитация, никаких планов", type: "zen" },
+                    { text: "Выход в бар или на вечеринку до утра", type: "nightowl" },
+                    { text: "Поход, пробежка или новый фитнес-класс", type: "health" },
+                    { text: "Музей, галерея, что-то эстетичное", type: "artist" },
+                    { text: "Разобрать шкаф, починить кран, план на неделю", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "Твой любимый жанр фильма?",
+                answers: [
+                    { text: "Комфортное кино, которое уже видел", type: "cozy" },
+                    { text: "Документалки, что-то осмысленное", type: "zen" },
+                    { text: "Хоррор или триллер ночью", type: "nightowl" },
+                    { text: "Спортивные фильмы, мотивация", type: "health" },
+                    { text: "Арт-хаус, авторское кино", type: "artist" },
+                    { text: "Документалки о бизнесе, «как это работает»", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "Какой цвет тебе ближе?",
+                answers: [
+                    { text: "Тёплый бежевый, кремовый", type: "cozy" },
+                    { text: "Спокойный зелёный", type: "zen" },
+                    { text: "Тёмно-фиолетовый", type: "nightowl" },
+                    { text: "Свежий мятный", type: "health" },
+                    { text: "Глубокий бордовый", type: "artist" },
+                    { text: "Серый, практичный", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "Твой идеальный завтрак?",
+                answers: [
+                    { text: "Овсянка с корицей и свежий хлеб", type: "cozy" },
+                    { text: "Просто вода и лёгкий салат", type: "zen" },
+                    { text: "Завтрак? Я только лёг спать", type: "nightowl" },
+                    { text: "Смузи с протеином и зеленью", type: "health" },
+                    { text: "Авокадо-тост в стильном кафе", type: "artist" },
+                    { text: "Что угодно, быстро, без заморочек", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "Ты в книжном магазине — тянешься к...",
+                answers: [
+                    { text: "Классическая литература, проверенные авторы", type: "cozy" },
+                    { text: "Философия, книги о mindfulness", type: "zen" },
+                    { text: "Триллеры, детективы, что-то с напряжением", type: "nightowl" },
+                    { text: "Здоровье, спорт, биографии атлетов", type: "health" },
+                    { text: "Искусство, дизайн, фотокниги", type: "artist" },
+                    { text: "Бизнес, продуктивность, «как заработать»", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "На необитаемом острове берёшь с собой...",
+                answers: [
+                    { text: "Плед и хорошую книгу", type: "cozy" },
+                    { text: "Ничего. Наслаждаюсь тишиной", type: "zen" },
+                    { text: "Колонку и плейлист", type: "nightowl" },
+                    { text: "Спортивный инвентарь", type: "health" },
+                    { text: "Скетчбук и карандаши", type: "artist" },
+                    { text: "Нож и набор для выживания", type: "pragmatist" }
+                ]
+            },
+            {
+                text: "Идеальный напиток (не кофе)?",
+                answers: [
+                    { text: "Горячий какао с маршмеллоу", type: "cozy" },
+                    { text: "Травяной чай", type: "zen" },
+                    { text: "Энергетик или крепкий чай", type: "nightowl" },
+                    { text: "Зелёный смузи или кефир", type: "health" },
+                    { text: "Крафтовый коктейль с необычными нотами", type: "artist" },
+                    { text: "Вода. Зачем усложнять?", type: "pragmatist" }
+                ]
+            }
+        ];
+
+        // === STATE ===
+        let currentQuestion = 0;
+        let scores = { cozy: 0, zen: 0, nightowl: 0, health: 0, artist: 0, pragmatist: 0 };
+
+        // === FUNCTIONS ===
+        function startQuiz() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const letters = ['А', 'Б', 'В', 'Г', 'Д', 'Е'];
+
+            document.getElementById('questionCounter').textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('progressFill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+
+            q.answers.forEach((answer, index) => {
+                const card = document.createElement('button');
+                card.className = 'answer-card';
+                card.innerHTML = `<span class="answer-letter">${letters[index]}</span>${answer.text}`;
+                card.onclick = () => selectAnswer(answer.type);
+                answersDiv.appendChild(card);
+            });
+        }
+
+        function selectAnswer(type) {
+            scores[type]++;
+
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                // Animate transition
+                document.getElementById('quizScreen').style.animation = 'none';
+                setTimeout(() => {
+                    document.getElementById('quizScreen').style.animation = 'slideIn 0.5s ease';
+                    showQuestion();
+                }, 50);
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            // Find winning personality
+            let maxScore = 0;
+            let winner = 'cozy';
+            for (const [type, score] of Object.entries(scores)) {
+                if (score > maxScore) {
+                    maxScore = score;
+                    winner = type;
+                }
+            }
+
+            const p = personalities[winner];
+
+            document.getElementById('quizScreen').classList.add('hidden');
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.classList.remove('hidden');
+
+            resultScreen.innerHTML = `
+                <div class="result-icon">${p.icon}</div>
+                <div class="result-label">Твоя кофейная личность</div>
+                <div class="result-name">${p.name}</div>
+                <div class="result-tagline">«${p.tagline}»</div>
+                <div class="coffee-card">
+                    <div class="coffee-emoji">${p.coffeeEmoji}</div>
+                    <div class="coffee-label">Твой напиток в Basecamp</div>
+                    <div class="coffee-name">${p.coffee}</div>
+                    <div class="coffee-desc">${p.desc}</div>
+                </div>
+                <div class="share-section">
+                    <button class="restart-btn" onclick="restart()">Пройти заново</button>
+                </div>
+            `;
+
+            document.getElementById('progressFill').style.width = '100%';
+        }
+
+        function restart() {
+            currentQuestion = 0;
+            scores = { cozy: 0, zen: 0, nightowl: 0, health: 0, artist: 0, pragmatist: 0 };
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
