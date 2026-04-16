@@ -261,6 +261,38 @@
 
         .share-section {
             margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .share-btn.telegram {
+            background: linear-gradient(135deg, #0088cc, #006699);
+        }
+
+        .share-btn.copy {
+            background: linear-gradient(135deg, var(--warm-brown), #8B5E3C);
         }
 
         .restart-btn {
@@ -282,6 +314,86 @@
             color: white;
         }
 
+        /* === PERCENTAGES === */
+        .percentages {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: var(--card-shadow);
+            text-align: left;
+        }
+
+        .percentages h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--warm-brown);
+            opacity: 0.6;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .percent-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .percent-row:last-child { margin-bottom: 0; }
+
+        .percent-icon {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .percent-info {
+            flex: 1;
+        }
+
+        .percent-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--warm-dark);
+            margin-bottom: 4px;
+        }
+
+        .percent-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: var(--warm-cream);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .percent-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .percent-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--warm-brown);
+            width: 40px;
+            text-align: right;
+            margin-left: 10px;
+        }
+
+        /* === CONFETTI === */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
         /* === ANIMATIONS === */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -301,6 +413,10 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        @keyframes percentGrow {
+            from { width: 0%; }
         }
 
         /* === FOOTER === */
@@ -345,6 +461,8 @@
 
         <!-- RESULT SCREEN -->
         <div id="resultScreen" class="result-screen hidden"></div>
+
+        <canvas id="confetti-canvas"></canvas>
 
         <div class="footer">
             Basecamp Coffee &mdash; Кофейня с характером
@@ -535,6 +653,8 @@
             // Find winning personality
             let maxScore = 0;
             let winner = 'cozy';
+            const total = questions.length;
+
             for (const [type, score] of Object.entries(scores)) {
                 if (score > maxScore) {
                     maxScore = score;
@@ -543,6 +663,44 @@
             }
 
             const p = personalities[winner];
+            const typeNames = {
+                cozy: 'Уютная Классика',
+                zen: 'Дзен Минималист',
+                nightowl: 'Ночная Сова',
+                health: 'Здоровяк',
+                artist: 'Артист Сноб',
+                pragmatist: 'Практичный Прагматик'
+            };
+            const typeIcons = {
+                cozy: '🏠', zen: '🌿', nightowl: '🌙',
+                health: '💪', artist: '🎨', pragmatist: '⚙️'
+            };
+            const barColors = {
+                cozy: '#D4A574', zen: '#7CB342', nightowl: '#7E57C2',
+                health: '#26A69A', artist: '#C62828', pragmatist: '#78909C'
+            };
+
+            // Build percentages rows
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            let percentHTML = '';
+            sorted.forEach(([type, score]) => {
+                const pct = Math.round((score / total) * 100);
+                percentHTML += `
+                    <div class="percent-row">
+                        <div class="percent-icon">${typeIcons[type]}</div>
+                        <div class="percent-info">
+                            <div class="percent-name">${typeNames[type]}</div>
+                            <div class="percent-bar-bg">
+                                <div class="percent-bar-fill" style="width: ${pct}%; background: ${barColors[type]};"></div>
+                            </div>
+                        </div>
+                        <div class="percent-value">${pct}%</div>
+                    </div>
+                `;
+            });
+
+            const shareText = encodeURIComponent(`Я — ${p.name}! ☕ Мой напиток в Basecamp: ${p.coffee}. Узнай свою кофейную личность!`);
+            const shareUrl = encodeURIComponent('https://ritabriii.github.io/quiz-project/');
 
             document.getElementById('quizScreen').classList.add('hidden');
             const resultScreen = document.getElementById('resultScreen');
@@ -559,12 +717,82 @@
                     <div class="coffee-name">${p.coffee}</div>
                     <div class="coffee-desc">${p.desc}</div>
                 </div>
-                <div class="share-section">
-                    <button class="restart-btn" onclick="restart()">Пройти заново</button>
+                <div class="percentages">
+                    <h3>Твой профиль</h3>
+                    ${percentHTML}
                 </div>
+                <div class="share-section">
+                    <a class="share-btn" href="https://wa.me/?text=${shareText}%20${shareUrl}" target="_blank" rel="noopener">WhatsApp</a>
+                    <a class="share-btn telegram" href="https://t.me/share/url?url=${shareUrl}&text=${shareText}" target="_blank" rel="noopener">Telegram</a>
+                    <button class="share-btn copy" onclick="copyLink()">Скопировать ссылку</button>
+                </div>
+                <button class="restart-btn" onclick="restart()">Пройти заново</button>
             `;
 
             document.getElementById('progressFill').style.width = '100%';
+            launchConfetti();
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText('https://ritabriii.github.io/quiz-project/').then(() => {
+                const btn = document.querySelector('.share-btn.copy');
+                btn.textContent = 'Скопировано!';
+                setTimeout(() => { btn.textContent = 'Скопировать ссылку'; }, 2000);
+            });
+        }
+
+        // === CONFETTI ===
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const colors = ['#D4A574', '#6B4226', '#7CB342', '#7E57C2', '#26A69A', '#FFD700', '#FF6B6B', '#4ECDC4'];
+            const pieces = [];
+
+            for (let i = 0; i < 80; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 6 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3 + 2,
+                    vx: (Math.random() - 0.5) * 2,
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 8,
+                    opacity: 1
+                });
+            }
+
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                frame++;
+
+                pieces.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rotation += p.rotSpeed;
+                    if (frame > 60) p.opacity -= 0.01;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.globalAlpha = Math.max(0, p.opacity);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+
+                if (frame < 160) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
         }
 
         function restart() {
